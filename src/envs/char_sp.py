@@ -518,22 +518,18 @@ class CharSPEnvironment(object):
 
         # create tree
         for nb_ops in range(nb_total_ops, 0, -1):
-
             # next operator, arity and position
             skipped, arity = self.sample_next_pos_ubi(nb_empty, nb_ops, rng)
             if arity == 1:
                 op = rng.choice(self.una_ops, p=self.una_ops_probs)
             else:
                 op = rng.choice(self.bin_ops, p=self.bin_ops_probs)
-
             nb_empty += self.OPERATORS[op] - 1 - skipped  # created empty nodes - skipped future leaves
             t_leaves += self.OPERATORS[op] - 1            # update number of total leaves
             l_leaves += skipped                           # update number of left leaves
-
             # update tree
             pos = [i for i, v in enumerate(stack) if v is None][l_leaves]
             stack = stack[:pos] + [op] + [None for _ in range(self.OPERATORS[op])] + stack[pos + 1:]
-
         # sanity check
         assert len([1 for v in stack if v in self.all_ops]) == nb_total_ops
         assert len([1 for v in stack if v is None]) == t_leaves
@@ -556,7 +552,6 @@ class CharSPEnvironment(object):
             if stack[pos] is None:
                 stack = stack[:pos] + leaves.pop() + stack[pos + 1:]
         assert len(leaves) == 0
-
         return stack
 
     def write_infix(self, token, args):
@@ -847,7 +842,7 @@ class CharSPEnvironment(object):
         except (ValueError, AttributeError, TypeError, OverflowError, NotImplementedError, UnknownSymPyOperator, ValueErrorExpression):
             return None
         except Exception as e:
-            logger.error("An unknown exception of type {0} occurred in line {1} for expression \"{2}\". Arguments:{3!r}.".format(type(e).__name__, sys.exc_info()[-1].tb_lineno, infix, e.args))
+            logger.error("An unknown exception of type {0} occurred in line {1} for expression \"{2}\". Arguments:{3!r}.".format(type(e).__name__, sys.exc_info()[-1].tb_lineno, "infix", e.args))
             return None
 
         # define input / output
